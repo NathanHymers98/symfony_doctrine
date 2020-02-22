@@ -6,8 +6,9 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 // These annotations mark this class as an Entity class so that doctrine will use this class to map a database table and its columns
+// By defining a repository class on the same line, when the method getRepository() is called to query the database, it will call this class when querying this entity
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\GenusRepository")
  * @ORM\Table(name="genus")
  */
 class Genus
@@ -42,6 +43,11 @@ class Genus
      * @ORM\Column(type="string", nullable=true)
      */
     private $funFact;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
 
     /**
      * @return mixed
@@ -107,7 +113,18 @@ class Genus
         $this->funFact = $funFact;
     }
 
+    public function getUpdatedAt()
+    {
+        return new \DateTime('-'.rand(0, 100).'days');
+    }
 
+    /**
+     * @param mixed $isPublished
+     */
+    public function setIsPublished($isPublished)
+    {
+        $this->isPublished = $isPublished;
+    }
 
 
 }

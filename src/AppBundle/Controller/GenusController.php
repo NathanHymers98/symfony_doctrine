@@ -31,29 +31,52 @@ class GenusController extends Controller
     }
 
     /**
-     * @Route("/genus/{genusName}")
+     * @Route("/genus")
+     */
+    public function listAction() // Making a query to get a list of genuses from the database.
+    {
+        $em = $this->getDoctrine()->getManager();
+        $genuses = $em->getRepository(Genus::class) // Creating a repository object with the argument that is the class I want to query from. In this case, the genus class.
+            ->findAllPublishedOrderedBySize();
+
+        return $this->render('genus/list.html.twig', [ // Rendering and returning the list view, which I am passing a variable so that we can target the genuses in the list view
+            'genuses' => $genuses,
+        ]);
+
+
+    }
+
+    // Giving this route below a name so that it can be easily targeted inside of twig
+    /**
+     * @Route("/genus/{genusName}", name="genus_show")
      */
     public function showAction($genusName)
     {
-        $funFact = 'Octopuses can change the color of their body in just *three-tenths* of a second!';
+        $em = $this->getDoctrine()->getManager();
+        $genus = $em->getRepository(Genus::class)
+            ->findOneBy(['name' => $genusName]); // Takes an array of things to find by.
+                                                // 'name' is the variable or database column and we want the name it finds to be put in the object $genusName
 
-        $cache = $this->get('doctrine_cache.providers.my_markdown_cache');
-        $key = md5($funFact);
-        if ($cache->contains($key)) {
-            $funFact = $cache->fetch($key);
-        } else {
-            sleep(1); // fake how slow this could be
-            $funFact = $this->get('markdown.parser')
-                ->transform($funFact);
-            $cache->save($key, $funFact);
+        if (!$genus) { // if $genus is not an object, meaning that the name could not be found in the database.
+            throw $this->createNotFoundException('No genus found'); // Throw a 404 not found exception with this message. This will not show in production
         }
 
-        $this->get('logger')
-            ->info('Showing genus: '.$genusName);
+//        $cache = $this->get('doctrine_cache.providers.my_markdown_cache');
+//        $key = md5($funFact);
+//        if ($cache->contains($key)) {
+//            $funFact = $cache->fetch($key);
+//        } else {
+//            sleep(1); // fake how slow this could be
+//            $funFact = $this->get('markdown.parser')
+//                ->transform($funFact);
+//            $cache->save($key, $funFact);
+//        }
+//
+//        $this->get('logger')
+//            ->info('Showing genus: '.$genusName);
 
         return $this->render('genus/show.html.twig', array(
-            'name' => $genusName,
-            'funFact' => $funFact,
+            'genus' => $genus, // Since we have a $genus object that is the database repo, we can just call it in the return because it will hold all the information we need.
         ));
     }
 

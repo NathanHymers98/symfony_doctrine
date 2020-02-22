@@ -1,0 +1,18 @@
+# Using the nelmio/alice library to create test data in the genus database table
+# After targeting the entity class which we want to create test data for, we tell it how many objects we want it to create in the database. Which is 1 to 10
+# After telling it how many objects we want, we then need to set values on the properties of those objects so that they have data in the database.
+# We could just put any value as the property value, but when we use '< >' we are calling a Faker function
+# By using the faker function and putting name() inside it, we are using that function and it will know it give back a name
+# In the subFamily, I am using text(20) function, it has a passed argument of 20 because that is how many characters of random text I want generating
+# SpeciesCount uses numberBetween() which obviuosly chooses a random number between the ones that are set as arguments
+# funFact uses sentence() to randomly generate a sentence.
+# isPublished uses boolean(75), which means that there will be a 75% change that the value of isPublished will be set to true
+
+# Important note: we can create our own Faker functions, which are called formatters, so instead of having '<name()>' we can have '<genus()>'
+AppBundle\Entity\Genus:
+  genus_{1..10}:
+    name: <genus()>
+    subFamily: <text(20)>
+    speciesCount: <numberBetween(100, 100000)>
+    funFact: <sentence()>
+    isPublished: <boolean(75)>

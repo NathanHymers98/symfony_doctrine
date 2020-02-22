@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{%  block body %}
+    <table class="table table-striped">
+        <thread>
+            <tr>
+                <th>Genus</th>
+                <th># of species</th>
+                <th>Last Updated</th>
+            </tr>
+        </thread>
+        <tbody>
+            {% for genus in genuses %}
+                <tr>
+                    <td>
+                        {# Creating a link to the genus show page below and passing it the genus name variable.
+                         Once a genus name is clicked on this page, the will be taken to the show page for that specific genus#}
+                        <a href="{{ path('genus_show', {
+                            'genusName': genus.name
+                        }) }}">{{ genus.name }}</a>
+
+                    </td>
+                    <td>{{ genus.speciesCount }}</td>
+                    <td>{{ genus.updatedAt|date('d-m-Y') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
